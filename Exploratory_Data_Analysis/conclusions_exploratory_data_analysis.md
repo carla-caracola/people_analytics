@@ -1,74 +1,186 @@
 # CONCLUSIONES
 
-- Todas las columnas que contienen valores nulos son de tipo `object`.
-
 ## Columnas y su tipo de variable
 
 ### Variables Numéricas
 
-- **`Age`**: Variable numérica discreta. Cambiar valores por extenso a numérico y tipo de la columna a `int64`. Crear columna nueva que categorice rangos de edad.
+- **`Age`**
+   - Tipo: Variable numérica discreta.
+   - LT: ✅
+     - Convertir valores textuales a numéricos.
+     - Cambiar el tipo de la columna a `int64`.
+     - Crear una columna nueva que categorice rangos de edad para análisis segmentado.
 
-- **`DailyRate`**: Variable numérica continua. Se debe eliminar el símbolo `$` y convertir el tipo de datos a `float64`. Incluye valores numéricos decimales pero aparece como columna de tipo string. Deberás hacer los cambios necesarios para convertirla en columna de tipo numérica. Analizar la calidad de datos en comparación con las demás variables similares: `HourlyRate`, `MonthlyIncome`, `MonthlyRate`.
+- **`DailyRate`**
+    - Tipo: Variable numérica continua.
+    - LT: ✅
+     - Eliminar el símbolo `$` y convertir el tipo de datos a `float64`.
+     - Revisar y corregir el valor frecuente `nan$` (repite 124 veces).
+     - Analizar la calidad de datos en comparación con otras variables relacionadas: `HourlyRate`, `MonthlyIncome`, `MonthlyRate`.
 
-- **`DistanceFromHome`**: Variable numérica discreta. No hay valores faltantes. Tiene 192 valores negativos. Los valores negativos podemos pasarlos a positivos, confirmado por César.
+- **`DistanceFromHome`**
+    - Tipo: Variable numérica discreta.
+    - LT: ✅
+     - Convertir 192 valores negativos a positivos, según confirmación de César.
 
-- **`HourlyRate`**: Variable numérica continua sin valores faltantes. 84 valores = "Not Available". Cambiar el tipo de datos a `float` y corregir "Not Available" para que sean `Null`.
+- **`HourlyRate`**
+    - Tipo: Variable numérica continua.
+    - LT: ✅
+     - Cambiar el tipo de datos a `float`.
+     - Corregir 84 valores "Not Available" para que sean `Null`.
 
-- **`MonthlyIncome`**: Variable numérica continua con un 52% de valores faltantes. Cambiar tipo a `float64` y comas por puntos.
+- **`MonthlyIncome`**
+    - Tipo: Variable numérica continua.
+    - LT: ✅
+     - 52% de valores faltantes.
+     - Cambiar el tipo de datos a `float64`.
+     - Sustituir comas por puntos en valores decimales.
 
-- **`MonthlyRate`**: Variable numérica continua sin valores faltantes.
+- **`MonthlyRate`**
+    - Tipo: Variable numérica continua
+    - LT: ❌
+      - No hay valores faltantes.
 
-- **`NUMCOMPANIESWORKED`**: Variable numérica discreta sin valores faltantes, valores de 0-9.
+- **`NUMCOMPANIESWORKED`**
+    - Tipo: Variable numérica discreta
+    - LT: ❌
+      - No hay valores faltantes.
+      - Contiene valores de 0-9.
 
-- **`PercentSalaryHike`**: Variable numérica continua sin valores faltantes.
+- **`PercentSalaryHike`**
+    - Tipo: Variable numérica continua
+    - LT: ❌
+      - No hay valores faltantes.
 
-- **`PerformanceRating`**: Variable numérica discreta con 12% de valores faltantes. Cambiar tipo a `int64`.
+- **`PerformanceRating`**
+    - Tipo: Variable numérica discreta.
+    - LT: ✅
+     - 12% de valores faltantes.
+     - Cambiar el tipo de datos a `int64`.
 
-- **`TOTALWORKINGYEARS`**: Variable numérica discreta con un 32% de valores faltantes. Cambiar tipo a `int64`.
+- **`TOTALWORKINGYEARS`**
+    - Tipo: Variable numérica discreta.
+    - LT: ✅
+      - 32% de valores faltantes.
+      - Cambiar el tipo de datos a `int64`.
 
-- **`TrainingTimesLastYear`**: Variable numérica discreta sin datos faltantes.
+- **`TrainingTimesLastYear`**
+    - Tipo: Variable numérica discreta.
+    - LT: ❌
+      - No hay valores faltantes.
 
-- **`YearsAtCompany`**: Variable numérica discreta sin datos faltantes.
+- **`YearsAtCompany`**
+    - Tipo: Variable numérica discreta.
+    - LT: ❌
+      - No hay valores faltantes.
 
-- **`YearsInCurrentRole`**: Variable numérica discreta con un 98% de valores faltantes.
+- **`YearsSinceLastPromotion`**
+    - Tipo: Variable numérica discreta.
+    - LT: ❌
+      - No hay valores faltantes.
 
-- **`YearsSinceLastPromotion`**: Variable numérica discreta sin datos faltantes.
+- **`YEARSWITHCURRMANAGER`**
+    - Tipo: Variable numérica discreta.
+    - LT: ❌
+      - No hay valores faltantes.
 
-- **`YEARSWITHCURRMANAGER`**: Variable numérica discreta sin datos faltantes.
+- **`DateBirth`**
+    - Tipo: Variable numérica de intervalo (año de nacimiento).
+    - LT: ❌
+      - No hay valores faltantes.
 
-- **`DateBirth`**: Variable numérica de intervalo (año de nacimiento) sin valores faltantes.
 
 ### Variables Categóricas
 
-- **`Attrition`**: Variable categórica binaria. Es un valor histórico, no conocemos el periodo en el que está contabilizado ni el/los tipos de rotaciones que contempla (consultado con el PO, César).
+- **`Attrition`**
+    - Tipo: Variable categórica binaria.
+    - LT:
+     - Revisar contexto y periodo de tiempo representado con el equipo de producto.
 
-- **`BusinessTravel`**: Variable categórica nominal con un 48% de valores nulos. Utilizar en el análisis de forma segmentada, excluyendo registros nulos.
+- **`BusinessTravel`**
+    - Tipo: Variable categórica nominal.
+    - LT:
+     - 48% de valores nulos.
+     - Utilizar en el análisis de forma segmentada, excluyendo registros nulos.
 
-- **`Department`**: Variable categórica nominal con un 81% de valores nulos. Rellenar datos faltantes a partir de la columna `JobRole` si es posible.
+- **`Department`**
+    - Tipo: Variable categórica nominal.
+    - LT:
+     - 81% de valores nulos.
+     - Rellenar datos faltantes a partir de la columna `JobRole` si es posible.
+     - Realizar `strip` en los datos existentes.
 
-- **`Education`**: Variable categórica ordinal sin valores faltantes, con valores del 1 al 5.
+- **`Education`**
+    - Tipo: Variable categórica ordinal.
+    - LT:
+     - No hay valores faltantes.
+     - Valores del 1 al 5.
 
-- **`EducationField`**: Variable categórica nominal, 6 valores únicos con un 46% de valores nulos.
+- **`EducationField`**
+    - Tipo: Variable categórica nominal.
+    - LT:
+     - 46% de valores nulos.
+     - Contiene 6 valores únicos.
 
-- **`employeenumber`**: Variable categórica nominal. Identificador único para cada empleado, pero con duplicados que deben ser analizados.
+- **`employeenumber`**
+    - Tipo: Variable categórica nominal.
+    - LT:
+     - Identificador único para cada empleado, pero contiene 534 duplicados.
+     - Transformar el tipo de dato a entero, eliminando formato decimal innecesario.
+     - Analizar y resolver duplicados en colaboración con César.
 
-- **`EnvironmentSatisfaction`**: Variable categórica ordinal sin valores faltantes. Transformar valores que superan 4 a nulos y desestimarlos en los cálculos.
+- **`EnvironmentSatisfaction`**
+    - Tipo: Variable categórica ordinal.
+    - LT:
+     - No hay valores faltantes.
+     - Transformar valores mayores a 4 a nulos y excluirlos de los cálculos.
 
-- **`Gender`**: Variable categórica nominal binaria sin valores faltantes. Reemplazar por "Male" y "Female".
+- **`Gender`**
+    - Tipo: Variable categórica nominal binaria.
+    - LT:
+     - No hay valores faltantes.
+     - Reemplazar valores por "Male" y "Female".
 
-- **`JobInvolvement`**: Variable categórica ordinal sin valores faltantes. Cambiar tipo a `object`.
+- **`JobInvolvement`**
+    - Tipo: Variable categórica ordinal.
+    - LT:
+     - No hay valores faltantes.
+     - Cambiar tipo de datos a `object`.
 
-- **`JobLevel`**: Variable categórica ordinal sin valores faltantes. Cambiar tipo a `object`.
+- **`JobLevel`**
+    - Tipo: Variable categórica ordinal.
+    - LT:
+      - No hay valores faltantes.
+      - Cambiar tipo de datos a `object`.
 
-- **`JobRole`**: Variable categórica nominal sin valores faltantes. Corregir valores: hacer strip y corregir errores tipográficos.
+- **`JobRole`**
+    - Tipo: Variable categórica nominal.
+    - LT:
+      - No hay valores faltantes.
+      - Corregir valores con `strip` y errores tipográficos.
 
-- **`JobSatisfaction`**: Variable categórica ordinal sin valores faltantes. Tiene valores únicos del 1 al 4. Mantener.
+- **`JobSatisfaction`**
+    - Tipo: Variable categórica ordinal.
+    - LT:
+      - No hay valores faltantes.
+      - Valores del 1 al 4. Mantener.
 
-- **`MaritalStatus`**: Variable categórica nominal con un 40% de valores faltantes. Corregir errores tipográficos.
+- **`MaritalStatus`**
+    - Tipo: Variable categórica nominal.
+    - LT:
+      - 40% de valores faltantes.
+      - Corregir errores tipográficos.
 
-- **`Over18`**: Variable categórica binaria con 56% de valores faltantes. Valores "Y" y `NaN`.
+- **`Over18`**
+    - Tipo: Variable categórica binaria.
+    - LT:
+      - 56% de valores faltantes.
+      - Valores: "Y" y `NaN`.
+      - Validar necesidad de esta columna.
 
-- **`OverTime`**: Variable categórica binaria con 42% de valores faltantes. Valores "No", `NaN`, y "Yes".
+- **`OverTime`**
+
+: Variable categórica binaria con 42% de valores faltantes. Valores "No", `NaN`, y "Yes".
 
 - **`RelationshipSatisfaction`**: Variable categórica ordinal sin valores faltantes. Tiene valores únicos del 1 al 4. Mantener.
 
@@ -78,25 +190,80 @@
 
 - **`RemoteWork`**: Variable categórica binaria sin valores faltantes. Normalizar los valores.
 
+
+15. **OverTime**
+    - Tipo: Variable categórica binaria.
+    - LT:
+      - 42% de valores faltantes.
+      - Valores: "No", `NaN`, y "Yes".
+      - Validar necesidad de esta columna.
+
+16. **RelationshipSatisfaction**
+    - Tipo: Variable categórica ordinal.
+    - LT:
+      - No hay valores faltantes.
+      - Valores del 1 al 4. Mantener.
+
+17. **StockOptionLevel**
+    - Tipo: Variable categórica ordinal.
+    - LT:
+      - No hay valores faltantes.
+
+18. **WORKLIFEBALANCE**
+    - Tipo: Variable categórica ordinal.
+    - LT:
+      - 7% de valores faltantes.
+      - Cambiar tipo de datos a `int64`.
+
+19. **RemoteWork**
+    - Tipo: Variable categórica binaria.
+    - LT:
+      - No hay valores faltantes.
+      - Normalizar los valores.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### Variables a Eliminar
 
-- **`employeecount`**: Variable constante sin valores faltantes, todos los valores son iguales a 1. No aporta valor. Remover esta columna.
+- **`employeecount`**
+    - Motivo: Variable constante sin valores faltantes, todos los valores son iguales a 1. No aporta valor. Remover esta columna.
 
-- **`SameAsMonthlyIncome`**: Eliminar esta columna ya que se repite.
+- **`SameAsMonthlyIncome`**
+    - Motivo: Eliminar esta columna ya que se repite.
 
-- **`Salary`**: Todos los valores son iguales, eliminar esta columna, no aporta valor.
+- **`Salary`**
+    - Motivo: Todos los valores son iguales, eliminar esta columna, no aporta valor.
 
-- **`RoleDepartament`**: Eliminar esta columna que es una suma de `JobRole` con `Department` y no aporta valor.
+- **`RoleDepartament`**
+    - Motivo: Eliminar esta columna que es una suma de `JobRole` con `Department` y no aporta valor.
 
-- **`NUMBERCHILDREN`**: Esta columna debe ser eliminada ya que no contiene valores.
+- **`NUMBERCHILDREN`**
+    - Motivo: Esta columna debe ser eliminada ya que no contiene valores.
 
-- **`StandardHours`**: Variable categórica nominal con un 74% de valores faltantes. Los valores que hay son todos iguales. Eliminar.
+- **`StandardHours`**
+    - Motivo: Variable categórica nominal con un 74% de valores faltantes. Los valores que hay son todos iguales. Eliminar.
 
-- **`Yearsincurrentrole`**: Esta columna debe ser eliminada ya que tiene un 98% valores faltantes.
+- **`Yearsincurrentrole`**
+    - Motivo: Esta columna debe ser eliminada ya que tiene un 98% valores faltantes.
+
+
 
 ### SUGERENCIAS
 
 - Que incluyan la fecha asociada a los registros: Datos recogidos en el 2023 >> Solo para esta columna o para todas? Info en el description de la columna DateBirth.
+
 
 
 
@@ -151,208 +318,3 @@ Hay que rellenar los datos faltantes de esa columna a partir de la columna 'JobR
 - `RoleDepartament`: Eliminar esta columna que es una suma de JobRole con Department y no aporta valor. 
 - `NUMBERCHILDREN`: Esta columna debe ser eliminada ya que no contiene valores.
 - `RemoteWork`: Variable categórica binária sin valores faltantes. Hay que normalizar los valores. 
-
-
-# LIMPIEZA Y TRANSFORMACIÓN
-
-- Observación general: Todas las columnas que contienen valores nulos son de tipo `object`.
-
-## Columnas y su tipo de variable
-
-### Variables Numéricas
-
-1. **Age**
-   - Tipo: Variable numérica discreta.
-   - LT:
-     - Convertir valores textuales a numéricos.
-     - Cambiar el tipo de la columna a `int64`.
-     - Crear una columna nueva que categorice rangos de edad para análisis segmentado.
-
-2. **DailyRate**
-   - Tipo: Variable numérica continua.
-   - LT:
-     - Eliminar el símbolo `$` y convertir el tipo de datos a `float64`.
-     - Revisar y corregir el valor frecuente `nan$` (repite 124 veces).
-     - Analizar la calidad de datos en comparación con otras variables relacionadas: `HourlyRate`, `MonthlyIncome`, `MonthlyRate`.
-
-3. **DistanceFromHome**
-   - Tipo: Variable numérica discreta.
-   - LT:
-     - Convertir 192 valores negativos a positivos, según confirmación de César.
-
-4. **HourlyRate**
-   - Tipo: Variable numérica continua.
-   - LT:
-     - Cambiar el tipo de datos a `float`.
-     - Corregir 84 valores "Not Available" para que sean `Null`.
-
-5. **MonthlyIncome**
-   - Tipo: Variable numérica continua.
-   - LT:
-     - 52% de valores faltantes.
-     - Cambiar el tipo de datos a `float64`.
-     - Sustituir comas por puntos en valores decimales.
-
-6. **PerformanceRating**
-   - Tipo: Variable numérica discreta.
-   - LT:
-     - 12% de valores faltantes.
-     - Cambiar el tipo de datos a `int64`.
-
-7. **TOTALWORKINGYEARS**
-    - Tipo: Variable numérica discreta.
-    - LT:
-      - 32% de valores faltantes.
-      - Cambiar el tipo de datos a `int64`.
-
-8. **TrainingTimesLastYear**
-    - Tipo: Variable numérica discreta.
-    - LT:
-      - No hay valores faltantes.
-
-9. **YearsAtCompany**
-    - Tipo: Variable numérica discreta.
-    - LT:
-      - No hay valores faltantes.
-
-
-### Variables Categóricas
-
-1. **Attrition**
-   - Tipo: Variable categórica binaria.
-   - LT:
-     - Revisar contexto y periodo de tiempo representado con el equipo de producto.
-
-2. **BusinessTravel**
-   - Tipo: Variable categórica nominal.
-   - LT:
-     - 48% de valores nulos.
-     - Utilizar en el análisis de forma segmentada, excluyendo registros nulos.
-
-3. **Department**
-   - Tipo: Variable categórica nominal.
-   - LT:
-     - 81% de valores nulos.
-     - Rellenar datos faltantes a partir de la columna `JobRole` si es posible.
-     - Realizar `strip` en los datos existentes.
-
-4. **Education**
-   - Tipo: Variable categórica ordinal.
-   - LT:
-     - No hay valores faltantes.
-     - Valores del 1 al 5.
-
-5. **EducationField**
-   - Tipo: Variable categórica nominal.
-   - LT:
-     - 46% de valores nulos.
-     - Contiene 6 valores únicos.
-
-6. **employeenumber**
-   - Tipo: Variable categórica nominal.
-   - LT:
-     - Identificador único para cada empleado, pero contiene 534 duplicados.
-     - Transformar el tipo de dato a entero, eliminando formato decimal innecesario.
-     - Analizar y resolver duplicados en colaboración con César.
-
-7. **EnvironmentSatisfaction**
-   - Tipo: Variable categórica ordinal.
-   - LT:
-     - No hay valores faltantes.
-     - Transformar valores mayores a 4 a nulos y excluirlos de los cálculos.
-
-8. **Gender**
-   - Tipo: Variable categórica nominal binaria.
-   - LT:
-     - No hay valores faltantes.
-     - Reemplazar valores por "Male" y "Female".
-
-9. **JobInvolvement**
-   - Tipo: Variable categórica ordinal.
-   - LT:
-     - No hay valores faltantes.
-     - Cambiar tipo de datos a `object`.
-
-10. **JobLevel**
-    - Tipo: Variable categórica ordinal.
-    - LT:
-      - No hay valores faltantes.
-      - Cambiar tipo de datos a `object`.
-
-11. **JobRole**
-    - Tipo: Variable categórica nominal.
-    - LT:
-      - No hay valores faltantes.
-      - Corregir valores con `strip` y errores tipográficos.
-
-12. **JobSatisfaction**
-    - Tipo: Variable categórica ordinal.
-    - LT:
-      - No hay valores faltantes.
-      - Valores del 1 al 4. Mantener.
-
-13. **MaritalStatus**
-    - Tipo: Variable categórica nominal.
-    - LT:
-      - 40% de valores faltantes.
-      - Corregir errores tipográficos.
-
-14. **Over18**
-    - Tipo: Variable categórica binaria.
-    - LT:
-      - 56% de valores faltantes.
-      - Valores: "Y" y `NaN`.
-      - Validar necesidad de esta columna.
-
-15. **OverTime**
-    - Tipo: Variable categórica binaria.
-    - LT:
-      - 42% de valores faltantes.
-      - Valores: "No", `NaN`, y "Yes".
-      - Validar necesidad de esta columna.
-
-16. **RelationshipSatisfaction**
-    - Tipo: Variable categórica ordinal.
-    - LT:
-      - No hay valores faltantes.
-      - Valores del 1 al 4. Mantener.
-
-17. **StockOptionLevel**
-    - Tipo: Variable categórica ordinal.
-    - LT:
-      - No hay valores faltantes.
-
-18. **WORKLIFEBALANCE**
-    - Tipo: Variable categórica ordinal.
-    - LT:
-      - 7% de valores faltantes.
-      - Cambiar tipo de datos a `int64`.
-
-19. **RemoteWork**
-    - Tipo: Variable categórica binaria.
-    - LT:
-      - No hay valores faltantes.
-      - Normalizar los valores.
-
-### Variables a Eliminar
-
-1. **employeecount**
-   - Motivo: Variable constante sin valores faltantes, todos los valores son iguales a 1. No aporta valor. Remover esta columna.
-
-2. **SameAsMonthlyIncome**
-   - Motivo: Eliminar esta columna ya que se repite.
-
-3. **Salary**
-   - Motivo: Todos los valores son iguales, eliminar esta columna, no aporta valor.
-
-4. **RoleDepartament**
-   - Motivo: Eliminar esta columna que es una suma de `JobRole` con `Department` y no aporta valor.
-
-5. **NUMBERCHILDREN**
-   - Motivo: Esta columna debe ser eliminada ya que no contiene valores.
-
-6. **StandardHours**
-   - Motivo: Variable categórica nominal con un 74% de valores faltantes. Los valores que hay son todos iguales. Eliminar.
-
-7. **YearsInCurrentRole**
-   - Motivo: Esta columna debe ser eliminada ya que tiene un 98% valores faltantes.
