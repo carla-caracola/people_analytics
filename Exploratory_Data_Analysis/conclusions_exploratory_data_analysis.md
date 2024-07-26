@@ -93,6 +93,10 @@
 - **`StandardHours`**: Variable categórica nominal con un 74% de valores faltantes. Los valores que hay son todos iguales. Eliminar.
 
 
+### SUGERENCIAS
+
+- Que incluyan la fecha asociada a los registros: Datos recogidos en el 2023 >> Solo para esta columna o para todas? Info en el description de la columna DateBirth.
+
 
 
 
