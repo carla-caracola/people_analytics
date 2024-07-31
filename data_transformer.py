@@ -12,8 +12,6 @@
 # Testing code: 
     # For each step of the process the program prints the result so that it can be reviewed and confirm that is working correctly
 
-print("-----------------------------------------------------------------------------------------------------")
-
 
 # Imports 📥
 
@@ -35,8 +33,6 @@ import matplotlib.pyplot as plt
 # Settings
 # -----------------------------------------------------------------------
 pd.set_option('display.max_columns', None) # para poder visualizar todas las columnas de los DataFrames
-
-print("-----------------------------------------------------------------------------------------------------")
 
 
 
@@ -343,6 +339,16 @@ class DataTransformer:
 
         return self.df
     
+    def remove_duplicates(self):
+        """Removes rows with duplicated employee_number, keeping the last appearance. Rows with NaN values are kept"""
+        # Separate rows with NaN from those without NaN
+        df_na = self.df[self.df["employee_number"].isna()]
+        df_no_na = self.df[self.df["employee_number"].notna()]
+        # Delete duplicates from rows without NaN
+        df_no_na_unique = df_no_na.drop_duplicates(subset=['employee_number'], keep='last')
+        # Rebuild original DataFrame
+        self.df = pd.concat([df_no_na_unique, df_na]).sort_index()
+
     def quick_check(self,column_name):
         """ This function is for testing purposes, to quicky check data type and unique values of a column"""
         print (f"Column name: {column_name}")
@@ -356,25 +362,8 @@ class DataTransformer:
         """Returns the transformed DataFrame."""
         return self.df
     
-    """def remove_duplicates(self): # In progress (NOT FINISHED)
-        self.df.drop_duplicates(subset=['employee_number'], keep='last', inplace=True)
-        def convert_object_to_float_eliminate_dolar(self, column_name):
-       
-        Converts a column with object type values containing $ signs at the end
-        and commas as decimal separators to numeric float values.
-       
-        if column_name in self.df.columns:
-            # Remove dollar signs from the end
-            self.df[column_name] = self.df[column_name].str.replace('$', '', regex=False)
-            
-            # Replace commas with dots for decimal points
-            self.df[column_name] = self.df[column_name].str.replace(',', '.', regex=False)
-            
-            # Convert the cleaned column to float type
-            self.df[column_name] = self.df[column_name].astype(float)
-        else:
-            print(f"Column {column_name} doesn't exist in the DataFrame.")"""
+    def create_csv(self):
+         self.df.to_csv("hr_data_transformed.csv")
 
 
-print("-----------------------------------------------------------------------------------------------------")
 
