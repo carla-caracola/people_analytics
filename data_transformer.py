@@ -212,15 +212,15 @@ class DataTransformer:
         self.df['distance_from_home'] = self.df['distance_from_home'].abs()
 
     def drop_redundant_columns(self, columns):
-            """Drops redundant columns like 'same_as_monthly_income'. Param columns is a list of columns to de dropped"""
-            self.df.drop(columns=columns, inplace=True, errors='ignore')
+        """Drops redundant columns like 'same_as_monthly_income'. Param columns is a list of columns to de dropped"""
+        self.df.drop(columns=columns, inplace=True, errors='ignore')
 
     def correct_env_satisfaction_values(self):
         """Transform values higher than 4 into NaN"""
         self.df['environment_satisfaction'] = self.df['environment_satisfaction'].apply(lambda x: x if x <= 4 else np.nan)
 
     def correct_hourly_rate(self):
-        """Transform all values from the column into into numeric and 'Not Available' into NaN"""
+        """Transform all values from the column into numeric and 'Not Available' into NaN"""
         
         def transform_hourly_rate_individual (value):
             """Transform a value into numeric and 'Not Available' into NaN"""
@@ -235,17 +235,17 @@ class DataTransformer:
 
         self.df[column_name] = self.df[column_name].str.replace(',','.').astype(float)
 
-    def correct_typographical_errors(self):
+    def correct_typos_marital_status(self):
         """Corrects typographical errors in the marital_status column."""
         self.df['marital_status'] = self.df['marital_status'].replace({'Marreid': 'Married','divorced':'Divorced'})
 
     def convert_role_to_department_normalize_job_role(self):
         # First change de type of data to be capitalize and the same way
-        self.df['JobRole'] = self.df['JobRole'].str.title()
-        self.df['Department'] = self.df['Department'].str.title()
+        self.df['job_role'] = self.df['job_role'].str.title()
+        self.df['department'] = self.df['department'].str.title()
        # Clean empty spaces
-        self.df['JobRole'] = self.df['JobRole'].str.strip()
-        self.df['Department'] = self.df['Department'].str.strip()
+        self.df['job_role'] = self.df['job_role'].str.strip()
+        self.df['department'] = self.df['department'].str.strip()
         
         conversion_dictionary = {
         'Healthcare Representative': 'Research & Development',
@@ -261,24 +261,17 @@ class DataTransformer:
          }
         # Iterate over the rows of the DataFrame
         for index, row in self.df.iterrows():
-            job_role = row['JobRole']
+            job_role = row['job_role']
             # Assign the corresponding value to Department using the dictionary
             if job_role in conversion_dictionary:
-                self.df.at[index, 'Department'] = conversion_dictionary[job_role]
+                self.df.at[index, 'department'] = conversion_dictionary[job_role]
                 print(f"Value '{job_role}' was transformed into '{conversion_dictionary[job_role]}'")
-
-    def change_marital_status(self):
-        
-        self.df['MaritalStatus'] = self.df['MaritalStatus'].replace({
-        "Marreid": "Married",
-        "divorced": "Divorced"})
-        self.df["MaritalStatus"] = self.df["MaritalStatus"].fillna("Unknown")
         
     def map_column_remote_work(self):
         dicc = {1: "True", 0: "False", "Yes": "True"}
 
-        # Replace the values in the RemoteWork column according to the dictionary
-        self.df["RemoteWork"] = self.df["RemoteWork"].replace(dicc)
+        # Replace the values in the remote_work column according to the dictionary
+        self.df["remote_work"] = self.df["remote_work"].replace(dicc)
 
     def change_null_for_unknown(self, column_list): # when doesnt exist a dominant category in categorical variable
         # Iterate through the list of columns to replace nulls with "Unknown"
@@ -339,6 +332,23 @@ class DataTransformer:
 
         return self.df
     
+    def convert_object_to_float_eliminate_dolar(self, column_name):
+        """
+        Converts a column with object type values containing $ signs at the end
+        and commas as decimal separators to numeric float values.
+        """
+        if column_name in self.df.columns:
+            # Remove dollar signs from the end
+            self.df[column_name] = self.df[column_name].str.replace('$', '', regex=False)
+            
+            # Replace commas with dots for decimal points
+            self.df[column_name] = self.df[column_name].str.replace(',', '.', regex=False)
+            
+            # Convert the cleaned column to float type
+            self.df[column_name] = self.df[column_name].astype(float)
+        else:
+            print(f"Column {column_name} doesn't exist in the DataFrame.")
+
     def remove_duplicates(self):
         """Removes rows with duplicated employee_number, keeping the last appearance. Rows with NaN values are kept"""
         # Separate rows with NaN from those without NaN
