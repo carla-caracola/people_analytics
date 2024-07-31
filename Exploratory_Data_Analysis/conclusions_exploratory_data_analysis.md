@@ -163,42 +163,25 @@
         - Valores: "No", `NaN`, y "Yes".
     - Nulos: 42% - Verificar relación de esta columna con las demás antes de tomar decisiones.
 
-
-
-
-
-
 - **`RelationshipSatisfaction`**
     - Tipo: Variable categórica ordinal.
-    - LT:
-      - No hay valores faltantes.
-      - Valores del 1 al 4. Mantener.
-
-: Variable categórica ordinal sin valores faltantes. Tiene valores únicos del 1 al 4. Mantener.
+      - Valores del 1 al 4.
 
 - **`StockOptionLevel`**
     - Tipo: Variable categórica ordinal.
-    - LT:
-      - No hay valores faltantes.
-
-: Variable categórica ordinal sin valores faltantes.
+      - Valores del 0 al 3.
 
 - **`WORKLIFEBALANCE`**
     - Tipo: Variable categórica ordinal.
-    - LT:
-      - 7% de valores faltantes.
+      - Valores del 1 al 4.
+    - Limpieza y transformación: ✅
       - Cambiar tipo de datos a `int64`.
-
-: Variable categórica ordinal con un 7% de valores faltantes. Cambiar tipo a `int64`.
+    - Nulos: 7% - Imputar por moda dado el bajo % de nulos.
 
 - **`RemoteWork`**
     - Tipo: Variable categórica binaria.
-    - LT:
-      - No hay valores faltantes.
+    - Limpieza y transformación: ✅
       - Normalizar los valores.
-
-: Variable categórica binaria sin valores faltantes. Normalizar los valores.
-
 
 
 ### Variables a Eliminar
@@ -213,7 +196,7 @@
     - Motivo: Todos los valores son iguales, eliminar esta columna, no aporta valor.
 
 - **`RoleDepartament`**
-    - Motivo: Eliminar esta columna que es una suma de `JobRole` con `Department` y no aporta valor.
+    - Motivo: Eliminar esta columna que es una suma de `JobRole` con `Department`, tras haberla usado para recuperar la columna `Department`.
 
 - **`NUMBERCHILDREN`**
     - Motivo: Esta columna debe ser eliminada ya que no contiene valores.
