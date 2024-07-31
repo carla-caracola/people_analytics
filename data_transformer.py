@@ -1,22 +1,14 @@
 # # Psssss READ ME! 👋👓
-# The objective of the following code it to clean and transform ABC Coorporation data to make it available for a subsequent analysis. 
-# The transformation methods of the data_transformer were developed based on the conclusions from the preliminary Exploratory Data Analysis of the raw data provided by the HR department of BC Coorporation.
-# The highlevel code structure is as follows: 
-    # 1) Import of packages and data
-    # 2) Definition of the DataTransformer class, this is the core of the transformation
-    # 3) Execution of the transformation with follows this structure:
-        # 3.1) Creation of an object from DataTransformer class
-        # 3.2) Rename all columns
-        # 3.3) Drop unnecessary columns
-        # 3.4) Transform data per column
-# Testing code: 
-    # For each step of the process the program prints the result so that it can be reviewed and confirm that is working correctly
+#-----------------------------------------------------------------------
+# The objective of the following code it to create a class to clean and transform ABC Coorporation data so it available for a subsequent analysis. 
+# The transformation methods of the DataTransformer class were developed based on the conclusions from the preliminary Exploratory Data Analysis of the raw data provided by the HR department of BC Coorporation.
+# Mostly, there is one method per column. Although some methods were developed in a way that can be applied for multiple columns at the same time.
 
 
 # Imports 📥
-
-# Packages
 #-----------------------------------------------------------------------
+
+# >> Packages
 import pandas as pd
 import numpy as np
 
@@ -25,18 +17,17 @@ from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
 from sklearn.impute import KNNImputer
 
-# Visualization
-# -----------------------------------------------------------------------
+# >> Visualization
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-# Settings
-# -----------------------------------------------------------------------
+# >> Settings
 pd.set_option('display.max_columns', None) # para poder visualizar todas las columnas de los DataFrames
 
 
 
 # DataTransformer class definition ✍️
+#-----------------------------------------------------------------------
 
 class DataTransformer:
     def __init__(self, dataframe):
@@ -372,8 +363,8 @@ class DataTransformer:
         """Returns the transformed DataFrame."""
         return self.df
     
-    def create_csv(self):
-         self.df.to_csv("hr_data_transformed.csv")
+    def create_csv(self, file_name):
+         self.df.to_csv(file_name)
 
 
 
