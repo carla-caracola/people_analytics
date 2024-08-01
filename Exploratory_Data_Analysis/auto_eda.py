@@ -4,9 +4,8 @@ from IPython.display import display
 from itertools import combinations
 from scipy.stats import kstest, spearmanr, pearsonr
 
+
 class AutoEDA:
-    def __init__(self):
-        pass
 
     def read_file(self, file_path):
         """
@@ -82,18 +81,10 @@ class AutoEDA:
                 else:
                     print("\nStatistical description (categorical):")
                     display(DataFrame[col].describe(include='object'))
-                print("\nCount of null values:")
-                display(DataFrame[col].isnull().sum())
-                print("\nCount of unique values:")
-                display(DataFrame[col].nunique())
-                print("\nUnique values:")
-                display(DataFrame[col].unique())
-                print("\nValue Counts:")
-                display(DataFrame[col].value_counts())
-                print("\nMost frequent value (mode):")
-                display(DataFrame[col].mode().iloc[0])
-                print("\nCount of duplicates in the column:")
-                display(DataFrame.duplicated(subset=[col]).sum())
+                print(f"\nCount of null values: {DataFrame[col].isnull().sum()}")
+                print(f"\nUnique values: {DataFrame[col].unique()}")
+                print(f"\nValue Counts: {DataFrame[col].value_counts()}")
+                print(f"\nCount of duplicates in the column: {DataFrame.duplicated(subset=[col]).sum()}")
 
     
     def __identify_linearity(dataframe, column_combinations_list):
@@ -132,9 +123,45 @@ class AutoEDA:
         return linear_relationships, non_linear_relationships
 
 
-    def correlations(self, DataFrame): 
-        numericas = DataFrame.select_dtypes(include = np.number).columns
-        all_combinations = list(combinations(numericas, 2))
-        linear, non_linear = self.__identify_linearity(DataFrame, all_combinations)
+    def identify_correlations(self, dataframe):
+        numerics = dataframe.select_dtypes(include=np.number).columns
+        num_combinations = list(combinations(numerics, 2))
+        linear, non_linear = self.__identify_linearity(dataframe, num_combinations)
+
+        # df_correlations = 
+
+        # categorics = dataframe.select_dtypes(include=['object', 'category']).columns
+        # cat_combinations = list(combinations(categorics, 2))
+
+
+
+
+
+
+
+        # Correlaciones para variables numéricas
+        pearson_corr = {}
+        for col1, col2 in linear:
+            corr, _ = pearsonr(dataframe[col1].dropna(), dataframe[col2].dropna())
+            pearson_corr[(col1, col2)] = corr
+
+        spearman_corr = {}
+        for col1, col2 in non_linear:
+            corr, _ = spearmanr(dataframe[col1].dropna(), dataframe[col2].dropna())
+            spearman_corr[(col1, col2)] = corr
+
+        # Correlaciones para variables categóricas
+
+        return pearson_corr, spearman_corr
+
+# # Uso de la clase
+# auto_eda = AutoEda()
+# pearson_corr, spearman_corr = auto_eda.correlations(df)
+
+# print("Pearson Correlations (Linear Relationships):")
+# print(pearson_corr)
+# print("\nSpearman Correlations (Non-linear Relationships):")
+# print(spearman_corr)
+
 
 
