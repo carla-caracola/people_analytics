@@ -340,6 +340,30 @@ class DataTransformer:
         else:
             print(f"Column {column_name} doesn't exist in the DataFrame.")
 
+
+    def impute_with_group_mean_and_knn(self, monthly_income, job_role, n_neighbors=5, additional_columns=None):
+        
+        self.df[monthly_income] = self.df.groupby(job_role)[monthly_income].transform(lambda x: x.fillna(x.median()))
+
+        columns_list = [monthly_income]
+
+        if additional_columns:
+            columns_list.extend(additional_columns)
+
+        if self.df[monthly_income].isnull().any():
+
+            imputer_knn = KNNImputer(n_neighbors=n_neighbors)
+
+            imputed_data = imputer_knn.fit_transform(self.df[columns_list])
+
+            imputed_df = pd.DataFrame(imputed_data, columns=columns_list)
+
+            self.df[monthly_income] = imputed_df[monthly_income]
+
+        return self.df
+    
+    
+    
     def remove_duplicates(self):
         """Removes rows with duplicated employee_number, keeping the last appearance. Rows with NaN values are kept"""
         # Separate rows with NaN from those without NaN
