@@ -93,7 +93,7 @@
     - Tipo: Variable categórica nominal.
     - Nulos: 48% - Utilizar en el análisis de forma segmentada, excluyendo registros nulos.
     Verificar relación de esta columna con las demás antes de tomar decisiones.
-    Reemplazar valores nulos por distribución aunque la moda sea sifnificativac (Travel_Rarely). El % de nulos es demasiado.
+    Reemplazar valores nulos por distribución aunque la moda sea sifnificativac (Travel_Rarely). El % de nulos es demasiado. >> Unknown
 
 - **`Department`**
     - Tipo: Variable categórica nominal.
@@ -101,6 +101,7 @@
         - Rellenar datos faltantes a partir de la columna `JobRole` si es posible.
         - Realizar `strip` en los datos existentes.
     Nulos: 81% - Intentaremos imputar con los datos de `JobRole` y/o `RoleDepartament`.
+    se imputa por la moda
 
 - **`Education`**
     - Tipo: Variable categórica ordinal.
@@ -209,6 +210,24 @@
 
 - **`Over18`**
     - Motivo: Esta columna no es necesaria ya que podemos saber si el empleado es mayor de 18 a partir de la columna `Age`.
+
+
+### NULOS
+
+# DailyRate                7.00 > media
+# HourlyRate               5.00 > media
+# MonthlyIncome           52.23 > Agrupar por JobRole e imputar por KNN o interative imputer
+# PerformanceRating       12.08 > mediana
+# TOTALWORKINGYEARS       32.59 > KNN o interative imputer
+# employeenumber          26.70 > KNN o interative imputer
+# EnvironmentSatisfaction  6.00 > mediana
+# WORKLIFEBALANCE          6.69 > mediana
+
+# BusinessTravel          47.83 > unknown
+# Department              81.29 > distribución de frecuencia
+# EducationField          46.16 > unknown
+# MaritalStatus           40.33 > unknown
+# OverTime                41.88 > unknown
 
 
 
