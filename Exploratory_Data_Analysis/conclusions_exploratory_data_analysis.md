@@ -214,20 +214,20 @@
 
 ### NULOS
 
-# DailyRate                7.00 > media
-# HourlyRate               5.00 > media
-# MonthlyIncome           52.23 > Agrupar por JobRole e imputar por KNN o interative imputer
-# PerformanceRating       12.08 > mediana
-# TOTALWORKINGYEARS       32.59 > KNN o interative imputer
-# employeenumber          26.70 > KNN o interative imputer
-# EnvironmentSatisfaction  6.00 > mediana
-# WORKLIFEBALANCE          6.69 > mediana
+* DailyRate                7.00 > media
+* HourlyRate               5.00 > media
+* MonthlyIncome           52.23 > Agrupar por JobRole e imputar por KNN o interative imputer
+* PerformanceRating       12.08 > mediana
+* TOTALWORKINGYEARS       32.59 > KNN o interative imputer
+* employeenumber          26.70 > KNN o interative imputer
+* EnvironmentSatisfaction  6.00 > mediana
+* WORKLIFEBALANCE          6.69 > mediana
 
-# BusinessTravel          47.83 > unknown
-# Department              81.29 > distribución de frecuencia
-# EducationField          46.16 > unknown
-# MaritalStatus           40.33 > unknown
-# OverTime                41.88 > unknown
+* BusinessTravel          47.83 > unknown
+* Department              81.29 > distribución de frecuencia
+* EducationField          46.16 > unknown
+* MaritalStatus           40.33 > unknown
+* OverTime                41.88 > unknown
 
 
 
