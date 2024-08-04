@@ -1,12 +1,18 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import warnings
 from IPython.display import display
 from itertools import combinations
 from scipy.stats import kstest, spearmanr, pearsonr
-import matplotlib.pyplot as plt
-import seaborn as sns
+warnings.filterwarnings("ignore")
+
 
 class AutoEDA:
+
+    def __init__(self):
+        self.colors = ["#2146B2", "#E0CA27", "#F8C895", "#D98162", "#F2EFEB", "#26261B"]
 
     def read_file(self, file_path):
         """
@@ -237,8 +243,9 @@ class AutoEDA:
         ylabel : str, optional (default='Frequency')
             Label for the y-axis.
         """
+        color = self.colors[0] # Choose a color from the color palette
         plt.figure(figsize=(8, 4))
-        plt.hist(df[column].dropna(), bins=bins, edgecolor='k')
+        plt.hist(df[column].dropna(), bins=bins, edgecolor='k', color=color)
         plt.title(title if title else f'Histogram of {column}')
         plt.xlabel(xlabel if xlabel else column)
         plt.ylabel(ylabel)
@@ -264,8 +271,9 @@ class AutoEDA:
         ylabel : str, optional
             Label for the y-axis.
         """
+        color = self.colors[1] # Choose a color from the color palette
         plt.figure(figsize=(8, 4))
-        plt.scatter(df[x_column], df[y_column])
+        plt.scatter(df[x_column], df[y_column], color=color)
         plt.title(title if title else f'Scatter Plot of {x_column} vs {y_column}')
         plt.xlabel(xlabel if xlabel else x_column)
         plt.ylabel(ylabel if ylabel else y_column)
@@ -289,15 +297,16 @@ class AutoEDA:
         ylabel : str, optional (default='Value')
             Label for the y-axis.
         """
+        color = self.colors[3] # Choose a color from the color palette
         plt.figure(figsize=(8, 4))
-        sns.boxplot(x=df[column])
+        sns.boxplot(x=df[column], color=color)
         plt.title(title if title else f'Boxplot of {column}')
         plt.xlabel(xlabel if xlabel else column)
         plt.ylabel(ylabel)
         plt.show()
 
 
-    def visualize_pairplot(self, dataframe, columns, height=5):
+    def visualize_pairplot(self, dataframe, columns, hue=None, height=5):
         """
         Visualize pair plots for selected columns of the DataFrame.
         
@@ -309,6 +318,9 @@ class AutoEDA:
         columns : list of str
             List of column names to be included in the pair plot.
         
+        hue : str, optional, default: None
+            Column name to be used for color encoding.
+        
         height : int, optional, default: 5
             Height of each facet in inches.
         
@@ -319,45 +331,14 @@ class AutoEDA:
         if not all(col in dataframe.columns for col in columns):
             raise ValueError("One or more columns are not in the DataFrame.")
         
-        sns.pairplot(dataframe[columns], height=height)
+        # Create the pairplot with the specified hue and color palette
+        pairplot = sns.pairplot(dataframe[columns + [hue]] if hue else dataframe[columns], 
+                               hue=hue, palette=self.colors, height=height)
+
         plt.tight_layout()
         plt.show()
 
-
-    def visualize(self, df, plot_type, **kwargs):
-        """
-        Master method to visualize different types of plots.
-
-        Parameters:
-        -----------
-        df : pandas.DataFrame
-            The DataFrame containing the data.
-        plot_type : str
-            Type of plot ('histogram', 'scatter', 'correlation_matrix', 'boxplot').
-        kwargs : dict
-            Additional keyword arguments for the specific plot methods.
-
-        Example usage:
-        --------------
-        Plot histogram
-        eda.visualize(df, 'histogram', column='price', bins=20, title='Price Distribution')
-
-        Plot scatter plot
-        eda.visualize(df, 'scatter', x_column='price', y_column='units_sold', title='Price vs Units Sold')
-        """
-        if plot_type == 'histogram':
-            self.plot_histogram(df, **kwargs)
-        elif plot_type == 'scatter':
-            self.plot_scatter(df, **kwargs)
-        elif plot_type == 'pairplot':
-            self.visualize_pairplot(df, **kwargs)
-        elif plot_type == 'boxplot':
-            self.plot_boxplot(df, **kwargs)
-        else:
-            print(f"Plot type '{plot_type}' is not supported.")
-
-
-    def visualize_categorical_counts(self, dataframe, categorical_cols): # TEST PENDING
+    def visualize_categorical_counts(self, dataframe, categorical_cols):
         """
         Visualize count plots for categorical columns in the DataFrame.
         
@@ -384,9 +365,10 @@ class AutoEDA:
         else:
             ax = [ax]
         
-        def count_plotter(ax, col, data):
+        def count_plotter(ax, col, data, colors):
             counted = data[col].value_counts()
-            sns.barplot(ax=ax, x=counted.index, y=counted.values, width=0.9, palette='Set1')
+            palette = colors[:len(counted)]  # Use only as many colors as there are categories
+            sns.barplot(ax=ax, x=counted.index, y=counted.values, width=0.9, palette=palette)
             ax.set_title(f"{col} count graph")
             if col in ['JobRole', 'EducationField']:
                 ax.set_xticklabels(labels=counted.index, rotation=90, fontsize=6)
@@ -395,10 +377,91 @@ class AutoEDA:
 
         for i, category in enumerate(categorical_cols):
             if i < len(ax):
-                count_plotter(ax[i], category, data=dataframe)
+                count_plotter(ax[i], category, data=dataframe, colors=self.colors)
             else:
                 # Hide unused subplots
                 ax[i].axis('off')
 
         plt.show()
 
+    def visualize_facet_grid(self, df, col_names, x_values, hue='gender'):
+        """
+        Create FacetGrid plots for given categorical columns and numerical values.
+
+        Parameters:
+        -----------
+        df : pandas.DataFrame
+            The DataFrame containing the data to be visualized.
+        
+        col_names : list of str
+            List of categorical column names to be used for facets.
+        
+        x_values : list of str
+            List of numerical column names to be plotted on the x-axis.
+        
+        hue : str, optional, default: 'Gender'
+            Column name to be used for color encoding.
+        
+        Returns:
+        --------
+        None
+        """
+        if len(col_names) != len(x_values):
+            raise ValueError("Length of col_names and x_values must be the same.")
+        
+        for col_name, x_value in zip(col_names, x_values):
+            facet = sns.FacetGrid(df, col=col_name, hue=hue, aspect=1, palette=self.colors, col_wrap=3)
+            facet.map(sns.kdeplot, x_value, fill=True)
+            facet.set(xlim=[0, df[x_value].max()])
+            facet.add_legend(label_order=df[hue].unique())
+            plt.tight_layout()
+            plt.show()
+
+    def visualize_general_statistics(self, df, df_heatmap1, df_heatmap2):
+        """
+        Create a series of general statistics visualizations using subplots.
+        
+        Parameters:
+        -----------
+        df : pandas.DataFrame
+            The DataFrame containing the data to be visualized.
+        
+        df_heatmap1 : pandas.DataFrame
+            DataFrame for the first heatmap.
+        
+        df_heatmap2 : pandas.DataFrame
+            DataFrame for the second heatmap.
+        
+        Returns:
+        --------
+        None
+        """
+        fig, ax = plt.subplots(3, 2, figsize=(15, 13))
+        fig.suptitle('General Statistics')
+        fig.subplots_adjust(wspace=0.4, hspace=0.5)
+        
+        # Boxplot for Department vs. Total Working Years
+        sns.boxplot(ax=ax[0, 0], data=df, y='department', x='total_working_years', hue='gender', palette=self.colors[:2])
+        ax[0, 0].set_title('Ages by Department', fontsize=14)
+        
+        # Boxplot for Education Field vs. Age
+        sns.boxplot(ax=ax[0, 1], data=df, y='education_field', x='age', hue='gender', palette=self.colors[:2])
+        ax[0, 1].set_title('Ages by Education Field', fontsize=14)
+        
+        # Heatmap for Job Role-Satisfaction Mapping
+        sns.heatmap(ax=ax[1, 0], data=df_heatmap1, square=True, linewidth=1, cmap='Reds')
+        ax[1, 0].set_title('Job Role-Satisfaction Mapping', fontsize=14)
+        
+        # Heatmap for Job Level-Involvement Mapping
+        sns.heatmap(ax=ax[1, 1], data=df_heatmap2, square=True, linewidth=1, cmap='Blues')
+        ax[1, 1].set_title('Job Level-Involvement Mapping', fontsize=14)
+        
+        # Histogram for Distribution of Salary Percent Hike
+        sns.histplot(ax=ax[2, 0], data=df, x='percent_salary_hike', hue='gender', multiple='stack', palette=self.colors)
+        ax[2, 0].set_title('Distribution of Salary Percent Hike', fontsize=14)
+        
+        # Histogram for Distribution of Years at Company
+        sns.histplot(ax=ax[2, 1], data=df, x='years_at_company', hue='gender', multiple='stack', palette=self.colors)
+        ax[2, 1].set_title('Distribution of Years at Company', fontsize=14)
+        
+        plt.show()
