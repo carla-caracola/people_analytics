@@ -74,6 +74,17 @@ class CreateDatabase:
         except mysql.connector.Error as err:
             print(f'Error creating table: {err}')
 
+
+    def insert_unique_values(self, table_name, id_column, name_column, values):
+        try:
+            for i, value in enumerate(values, start=1):
+                query = f"INSERT INTO {table_name} ({id_column}, {name_column}) VALUES (%s, %s)"
+                # Aquí se llama correctamente a insert_data con query y values
+                self.insert_data(query, (i, value))
+            print(f"Inserted unique values into '{table_name}' successfully.")
+        except mysql.connector.Error as err:
+            print(f"Error inserting unique values into '{table_name}': {err}")
+
     def insert_data(self, query, values):
         try:
             # Execute the query with the proportioned values
@@ -99,6 +110,13 @@ class CreateDatabase:
         for row in dataframe.itertuples(index=False, name=None):
             self.insert_data(query, row)
 
+    def clean_dataframe(self, dataframe):
+        # Renombrar la columna 'Unnamed: 0' a 'employee_id'
+        dataframe.rename(columns={'Unnamed: 0': 'employee_id'}, inplace=True)
+        # Eliminar duplicados basados en la columna 'employee_id'
+        dataframe = dataframe[~dataframe.index.duplicated(keep='first')]
+        print("DataFrame cleaned successfully.")
+        return dataframe
             
     def close(self):
         # Close cursor and connection
