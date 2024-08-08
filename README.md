@@ -40,10 +40,10 @@ Visualizations and descriptive analyses to highlight trends, areas for improveme
 
 
 ## ⚙️ Technologies
-MySQL Workbench
-Visual Studio Code
-Python (Pandas, Numpy, Matplotlib, Seaborn, Scipy)
-Jupyter Notebook
+- MySQL Workbench
+- Visual Studio Code
+- Python (Pandas, Numpy, Matplotlib, Seaborn, Scipy)
+- Jupyter Notebook
 
 ## 🛠️ Installation
 Install Python: Download and install Python from Python.org.
@@ -53,9 +53,8 @@ pip install notebook
 
 Install Visual Studio Code: Download and install Visual Studio Code from Visual Studio Code.
 
-Install Visual Studio Code Extensions:
+Install Visual Studio Code Extensions:Go to the Extensions view by clicking on the square icon in the sidebar.
 
-Go to the Extensions view by clicking on the square icon in the sidebar.
 Search for and install the following extensions:
 - Python (by Microsoft)
 - Jupyter (by Microsoft)
@@ -75,10 +74,10 @@ We believe that an organization’s true success lies in the strength of its peo
 We excel in turning data into actionable insights with our expertise in Exploratory Data Analysis (EDA), Data Extraction, Transformation, and Loading (ETL). Our goal is to turn raw data into smart solutions that solve our clients' biggest challenges.
 
 ## 🌟 Authors
-Laia Ayats
-Maíra Pitelli
-Carla Biscotti
-Elena Lara
+- Laia Ayats
+- Maíra Pitelli
+- Carla Biscotti
+- Elena Lara
 
 ## 🎁 Acknowledgements
 To the ADALAB professors for the attention given throughout the project. To our classmates for their support and for sharing.
