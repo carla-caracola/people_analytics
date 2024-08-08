@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import warnings
+from scipy.stats import chi2_contingency
 from IPython.display import display
 from itertools import combinations
 from scipy.stats import kstest, spearmanr, pearsonr
@@ -130,7 +131,7 @@ class AutoEDA:
         return linear_relationships, non_linear_relationships
 
 
-    def identify_correlations(self, dataframe):
+    def numeric_correlations(self, dataframe):
         """
         Identifies correlations among numeric columns in the dataframe using Pearson or Spearman methods.
 
@@ -222,7 +223,50 @@ class AutoEDA:
         # Return None, as we're only printing the results
         return None
         # return weak_correlations, moderate_correlations, strong_correlations
+
+
+    def identify_categorical_cols(self, df):
+        return df.select_dtypes(include='O').columns
+ 
+    def __cramers_v(self, confusion_matrix):
+        chi2 = chi2_contingency(confusion_matrix)[0]
+        n = confusion_matrix.sum().sum()
+        r, k = confusion_matrix.shape
+        return np.sqrt(chi2 / (n * (min(k, r) - 1)))
+
+    def categorical_correlations(self, df, categorical_columns):
+        correlations = []
+        processed_pairs = set()  # Para rastrear los pares ya procesados
+
+        
+        for col1 in categorical_columns:
+            for col2 in categorical_columns:
+                if col1 != col2 and (col2, col1) not in processed_pairs:
+                    confusion_matrix = pd.crosstab(df[col1], df[col2])
+                    correlation = self.__cramers_v(confusion_matrix)
+                    correlations.append((col1, col2, correlation))
+                    processed_pairs.add((col1, col2))  # Añadir el par a los procesados
+
+        weak_correlations = [item for item in correlations if 0.1 <= item[2] < 0.3]
+        moderate_correlations = [item for item in correlations if 0.3 <= item[2] < 0.5]
+        strong_correlations = [item for item in correlations if item[2] >= 0.5]
     
+        # Print the results
+        print("Weak Correlations:")
+        for item in weak_correlations:
+            print(f"Between {item[0]} and {item[1]}: {item[2]:.2f}")
+
+        print("\nModerate Correlations:")
+        for item in moderate_correlations:
+            print(f"Between {item[0]} and {item[1]}: {item[2]:.2f}")
+
+        print("\nStrong Correlations:")
+        for item in strong_correlations:
+            print(f"Between {item[0]} and {item[1]}: {item[2]:.2f}")
+
+        # Return None, as we're only printing the results
+        return None
+
 
     def plot_histogram(self, df, column, bins=10, title=None, xlabel=None, ylabel='Frequency'):
         """
@@ -280,16 +324,18 @@ class AutoEDA:
         plt.show()
 
 
-    def plot_boxplot(self, df, column, title=None, xlabel=None, ylabel='Value'):
+    def plot_boxplot(self, df, column1, column2=None, title=None, xlabel=None, ylabel='Value'):
         """
-        Plot a boxplot for a given column in the DataFrame.
+        Plot a boxplot for one column or a comparison of two columns in the DataFrame.
 
         Parameters:
         -----------
         df : pandas.DataFrame
             The DataFrame containing the data.
-        column : str
-            The column for which the boxplot is to be plotted.
+        column1 : str
+            The primary column for which the boxplot is to be plotted.
+        column2 : str, optional
+            The secondary column to compare with the primary column (for grouped boxplot).
         title : str, optional
             Title of the plot.
         xlabel : str, optional
@@ -297,13 +343,23 @@ class AutoEDA:
         ylabel : str, optional (default='Value')
             Label for the y-axis.
         """
-        color = self.colors[3] # Choose a color from the color palette
-        plt.figure(figsize=(8, 4))
-        sns.boxplot(x=df[column], color=color)
-        plt.title(title if title else f'Boxplot of {column}')
-        plt.xlabel(xlabel if xlabel else column)
-        plt.ylabel(ylabel)
-        plt.show()
+        if column2 is None:
+            # Single column boxplot
+            plt.figure(figsize=(8, 4))
+            sns.boxplot(y=df[column1], color=self.colors[3])
+            plt.title(title if title else f'Boxplot of {column1}')
+            plt.ylabel(ylabel)
+            plt.show()
+        else:
+            # Comparison of two columns
+            plt.figure(figsize=(10, 6))
+            sns.boxplot(x=df[column2], y=df[column1], palette=self.colors)
+            plt.title(title if title else f'Boxplot of {column1} by {column2}')
+            plt.xlabel(column2)
+            plt.ylabel(ylabel)
+            plt.show()
+
+
 
 
     def visualize_pairplot(self, dataframe, columns, hue=None, height=5):
@@ -465,3 +521,158 @@ class AutoEDA:
         ax[2, 1].set_title('Distribution of Years at Company', fontsize=14)
         
         plt.show()
+
+
+    def pieplot(self, data, columns, titles=None, explode_ratio=0.05):
+        """
+        Generates pie plots for specified columns in the dataframe and arranges them in a single row.
+
+        Parameters:
+        - data: pd.DataFrame, the dataframe containing the data.
+        - columns: list of str, the names of the columns to plot.
+        - titles: list of str, optional, titles for each pie plot.
+        - explode_ratio: float, optional, the fraction by which to offset each wedge.
+
+        Returns:
+        - None, displays the pie plots.
+        """
+        num_columns = len(columns)
+        
+        if titles is None:
+            titles = [None] * num_columns
+        
+        if num_columns == 0:
+            raise ValueError("The 'columns' list must contain at least one column.")
+        
+        # Determine layout for subplots
+        fig, axs = plt.subplots(1, num_columns, figsize=(num_columns * 5, 5))
+        
+        # Handle the case where there is only one column
+        if num_columns == 1:
+            axs = [axs]
+        
+        for ax, col, title in zip(axs, columns, titles):
+            # Calculate the distribution
+            distribution = data[col].value_counts()
+            
+            # Create the explode configuration
+            explode = [explode_ratio] * len(distribution)
+            
+            # Generate the pie plot
+            wedges, texts, autotexts = ax.pie(
+                distribution,
+                labels=distribution.index,
+                autopct='%1.1f%%',
+                startangle=140,
+                colors=self.colors[:len(distribution)],
+                explode=explode,
+                shadow=True
+            )
+            
+            # Set title if provided
+            if title:
+                ax.set_title(title, fontsize=16)
+        
+        plt.tight_layout()
+        plt.show()
+
+
+    def boxplot_distribution(self, data, category_column, value_column, title=None):
+        """
+        Generates a boxplot to show the distribution of a numerical value across different categories.
+
+        Parameters:
+        - data: pd.DataFrame, the dataframe containing the data.
+        - category_column: str, the name of the categorical column (e.g., products).
+        - value_column: str, the name of the numerical column (e.g., price).
+        - title: str, optional, the title of the plot.
+
+        Returns:
+        - None, displays the boxplot.
+        """
+        plt.figure(figsize=(12, 6))
+        
+        # Create the boxplot using seaborn
+        sns.boxplot(x=data[category_column], y=data[value_column], palette=self.colors)
+        
+        # Add title if provided
+        if title:
+            plt.title(title, fontsize=16)
+        
+        # Add labels
+        plt.xlabel(category_column.capitalize())
+        plt.ylabel(value_column.capitalize())
+        
+        plt.xticks(rotation=45)  # Rotate x-axis labels if needed for better readability
+        plt.tight_layout()
+        plt.show()
+        
+
+    def plot_comparative_analysis(self, df):
+        """
+        Generate a series of comparative plots to answer key questions about employee attrition.
+
+        Parameters:
+        -----------
+        df : pandas.DataFrame
+            The DataFrame containing the data.
+        """
+        
+        # 2. Relationship between remote work and attrition
+        plt.figure(figsize=(15, 8))
+        plt.subplot(2, 2, 1)
+        sns.barplot(x='remote_work', y='attrition', data=df, palette=self.colors)
+        plt.title('Attrition by Remote Work Status')
+        plt.xlabel('Remote Work')
+        plt.ylabel('Attrition')
+
+        # 3. Attrition by department
+        plt.subplot(2, 2, 2)
+        df['department'] = df['department'].astype(str)  # Ensure department is treated as a categorical variable
+        sns.barplot(x='department', y='attrition', data=df, palette=self.colors)
+        plt.title('Attrition by Department')
+        plt.xlabel('Department')
+        plt.ylabel('Attrition')
+        plt.xticks(rotation=45)
+
+        # 4. Attrition based on overtime (boxplot)
+        plt.subplot(2, 2, 3)
+        sns.boxplot(x='over_time', y='attrition', data=df, palette=self.colors)
+        plt.title('Attrition by Overtime Status')
+        plt.xlabel('Over Time')
+        plt.ylabel('Attrition')
+
+        # 5. Attrition by job role
+        plt.subplot(2, 2, 4)
+        df['job_role'] = df['job_role'].astype(str)  # Ensure job_role is treated as a categorical variable
+        sns.barplot(x='job_role', y='attrition', data=df, palette=self.colors)
+        plt.title('Attrition by Job Role')
+        plt.xlabel('Job Role')
+        plt.ylabel('Attrition')
+        plt.xticks(rotation=45)
+
+        plt.tight_layout()
+        plt.show()
+
+        # 8. Education level or field of study affecting attrition
+        plt.figure(figsize=(15, 8))
+        
+        # Education level
+        plt.subplot(1, 2, 1)
+        sns.boxplot(x='education', y='attrition', data=df, palette=self.colors)
+        plt.title('Attrition by Education Level')
+        plt.xlabel('Education Level')
+        plt.ylabel('Attrition')
+
+        # Education field
+        plt.subplot(1, 2, 2)
+        df['education_field'] = df['education_field'].astype(str)  # Ensure education_field is treated as a categorical variable
+        sns.barplot(x='education_field', y='attrition', data=df, palette=self.colors)
+        plt.title('Attrition by Education Field')
+        plt.xlabel('Education Field')
+        plt.ylabel('Attrition')
+        plt.xticks(rotation=45)
+
+        plt.tight_layout()
+        plt.show()
+
