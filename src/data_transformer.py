@@ -262,7 +262,7 @@ class DataTransformer:
         dicc = {1: "True", 0: "False", "Yes": "True"}
 
         # Replace the values in the remote_work column according to the dictionary
-        self.df["remote_work"] = self.df["remote_work"].map(dicc)
+        self.df["remote_work"] = self.df["remote_work"].replace(dicc)
 
     def change_null_for_unknown(self, column_list): # when doesnt exist a dominant category in categorical variable
         # Iterate through the list of columns to replace nulls with "Unknown"

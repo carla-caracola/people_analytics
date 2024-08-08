@@ -2,9 +2,9 @@
 
 ## 📝 Project Summary
 
-In today's highly competitive business environment, informed decision-making is crucial for long-term success. Employee retention and job satisfaction are critical issues for any organization, directly impacting productivity, morale, and profitability.
+As part of our ongoing studies in the Data Analytics bootcamp, module 3, we embarked on the People Analytics project. In this project, we conducted a comprehensive data analysis, navigating through various phases to provide insights for an IT consulting firm.
 
-ABC Corporation has tasked us with a comprehensive data analysis and A/B experimentation project aimed at reducing employee turnover and improving job satisfaction. Our mission is to identify key factors influencing job satisfaction and ultimately employee retention.
+Employee retention and job satisfaction are critical issues for any organization, directly impacting productivity, morale, and profitability so we did a comprehensive data analysis and A/B experimentation project aimed at reducing employee turnover and improving job satisfaction. Our mission is to identify key factors influencing job satisfaction and ultimately employee retention.
 
 In this project, we will present the results of our exploratory data analysis, design an A/B experiment to test critical hypotheses, and analyze the results to provide ABC Corporation with valuable insights to inform their strategic decisions.
 

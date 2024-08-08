@@ -1,41 +1,108 @@
 # Imports 📚
 #%%
 import pandas as pd
-from src import auto_eda as AutoEDA
-from src import data_transformer as data
-from src import database_creation as db
+from src.data_transformer import DataTransformer as data
+from src.database_creation import CreateDatabase as db
+from src import queries as query
+from datetime import datetime
 
 #%%
-# First step :EDA Analysis
+# FIRST STEP: EXTRACT DATA
 
-eda = AutoEDA() # Class that automates all EDA analysys
+df = pd.read_csv("data/HR RAW DATA.csv", index_col=0)
+df.head()
+hr_data = pd.read_csv("data/hr_data_transformed_2024-08-02_161418.csv")
 
 #%%
-df = eda.read_file('../data/hr_data_transformed_2024-08-02_16:14:18.csv')
-eda.explo_df(df)
+# SECOND STEP: TRANSFORMATION
+abc_data = data(df)
 
-
-df_corr = (eda.identify_correlations(df))['spearman'] # Returns dict with pearce or spearman method as key and df as value
-df_corr
-
-eda.classify_correlations(df_corr)
-eda.plot_histogram(df, 'years_with_curr_manager')
-
-eda.plot_scatter(df, 'years_with_curr_manager', 'years_at_company')
-eda.plot_boxplot(df, 'years_since_last_promotion')
-eda.visualize_pairplot(df, ['years_at_company', 'years_since_last_promotion', 'job_level'], hue='gender')
-
-eda.visualize_categorical_counts(df, ['business_travel', 'department', 'marital_status', 'remote_work'])
-
-eda.visualize_facet_grid(df, col_names=['business_travel','job_role','department'], x_values=['daily_rate','monthly_income','total_working_years'], hue='gender')
-
-df_heatmap1=df.groupby(['job_role','job_satisfaction']).monthly_income.mean().unstack(level=1)
-df_heatmap2=df.groupby(['job_involvement','job_level']).monthly_rate.mean().unstack(level=1)
-
-eda.visualize_general_statistics(df, df_heatmap1, df_heatmap2)
-eda.visualize_pairplot(df, ['monthly_income','job_level','total_working_years','monthly_rate','age'], hue='gender')
+abc_data.rename_columns()
 #%%
-# Second step: Data transformation
+# convert number written in letters into into numbers written in numbers
+
+abc_data.convert_age_to_numbers()
+
+# convert column to "int"
+
+abc_data.convert_to_numeric ("age","integer")
+
+#%%
+abc_data.fix_negative_distances()
+#%%
+abc_data.correct_env_satisfaction_values()
+
+#%%
+abc_data.replace_gender_values()
+#%%
+abc_data.correct_hourly_rate()
+#%%
+abc_data.transform_to_float("monthly_income")
+
+#%%
+abc_data.transform_to_float("performance_rating")
+#%%
+abc_data.transform_to_float("total_working_years")
+#%%
+abc_data.transform_to_float("work_life_balance")
+#%%
+abc_data.correct_typos_marital_status()
+
+#%%
+abc_data.convert_object_to_float_eliminate_dolar("daily_rate")
+#%%
+abc_data.map_column_remote_work()
+#%%
+abc_data.convert_role_to_department_normalize_job_role()
+#%%
+columns_to_delete = ["employee_count", "same_as_monthly_income", "salary", "number_children", "standard_hours", "years_in_current_role", "over_18", "role_departament"]
+
+abc_data.drop_redundant_columns(columns_to_delete)
+#%%
+abc_data.transform_to_float("employee_number")
+
+#%%
+abc_data.impute_with_group_mean_and_knn('monthly_income', 'job_role')
+#%%
+columns_modify = ["business_travel", "education_field", "marital_status", "over_time", "employee_number", "department"]
+abc_data.change_null_for_unknown(columns_modify)
+#%%
+columns_modify = ["daily_rate", "hourly_rate"]
+abc_data.change_null_for_mean(columns_modify)
+#%%
+columns_modify = ["performance_rating", "environment_satisfaction","work_life_balance"]
+abc_data.change_null_for_median(columns_modify)
+#%%
+columns_modify = ["total_working_years"]
+abc_data.change_null_for_mean(columns_modify)
 
 
+#%%
+# THIRD STEP: LOAD
+db_hr = db(user ="root", password="AlumnaAdalab", host= "127.0.0.1", database="HR_optimization") # gives parameters to the database
+db_hr.clean_dataframe(hr_data)
 
+#%%
+db_hr.create_database()
+# %%
+db_hr.connect("HR_optimization")
+#%%
+db_hr.create_table("departments",query.schema1)
+db_hr.create_table("education_fields",query.schema2)
+db_hr.create_table("employees",query.schema3)
+db_hr.create_table("job_roles",query.schema4 )
+
+#%%
+# Insert unique values into 'job_roles'
+db_hr.insert_unique_values('job_roles', 'job_role_id', 'job_role_name', hr_data['job_role'].unique())
+
+db_hr.insert_unique_values('departments', 'department_id', 'department_name', hr_data['department'].unique())
+
+db_hr.insert_unique_values('education_fields', 'education_field_id', 'education_field_name', hr_data['education_field'].unique())
+
+#%%
+
+db_hr.bulk_insert_data(hr_data, 'employees')
+db_hr.close()
+
+#%%
