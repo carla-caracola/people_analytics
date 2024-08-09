@@ -523,6 +523,9 @@ class AutoEDA:
         plt.show()
 
 
+    
+
+
     def pieplot(self, data, columns, titles=None, explode_ratio=0.05):
         """
         Generates pie plots for specified columns in the dataframe and arranges them in a single row.
@@ -536,6 +539,27 @@ class AutoEDA:
         Returns:
         - None, displays the pie plots.
         """
+        def categorize_value(val):
+            if val == 1:
+                return 'Bajo'
+            elif val == 2:
+                return 'Medio Bajo'
+            elif val == 3:
+                return 'Medio Alto'
+            elif val == 4:
+                return 'Alto'
+
+        # self.colors = ["#2146B2", "#E0CA27", "#F8C895", "#D98162", "#F2EFEB", "#26261B"]
+
+
+        # Define a consistent color mapping for the categories
+        color_mapping = {
+            'Bajo': '#2146B2',        
+            'Medio Bajo': '#E0CA27', 
+            'Medio Alto': '#F8C895', 
+            'Alto': '#D98162'      
+        }
+
         num_columns = len(columns)
         
         if titles is None:
@@ -552,19 +576,19 @@ class AutoEDA:
             axs = [axs]
         
         for ax, col, title in zip(axs, columns, titles):
-            # Calculate the distribution
-            distribution = data[col].value_counts()
+            # Apply the categorization function to convert numeric values to categories
+            categorized_data = data[col].apply(categorize_value).value_counts()
             
             # Create the explode configuration
-            explode = [explode_ratio] * len(distribution)
+            explode = [explode_ratio] * len(categorized_data)
             
             # Generate the pie plot
             wedges, texts, autotexts = ax.pie(
-                distribution,
-                labels=distribution.index,
+                categorized_data,
+                labels=categorized_data.index,
                 autopct='%1.1f%%',
                 startangle=140,
-                colors=self.colors[:len(distribution)],
+                colors=[color_mapping[label] for label in categorized_data.index],
                 explode=explode,
                 shadow=True
             )
@@ -575,6 +599,73 @@ class AutoEDA:
         
         plt.tight_layout()
         plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # def pieplot(self, data, columns, titles=None, explode_ratio=0.05):
+    #     """
+    #     Generates pie plots for specified columns in the dataframe and arranges them in a single row.
+
+    #     Parameters:
+    #     - data: pd.DataFrame, the dataframe containing the data.
+    #     - columns: list of str, the names of the columns to plot.
+    #     - titles: list of str, optional, titles for each pie plot.
+    #     - explode_ratio: float, optional, the fraction by which to offset each wedge.
+
+    #     Returns:
+    #     - None, displays the pie plots.
+    #     """
+    #     num_columns = len(columns)
+        
+    #     if titles is None:
+    #         titles = [None] * num_columns
+        
+    #     if num_columns == 0:
+    #         raise ValueError("The 'columns' list must contain at least one column.")
+        
+    #     # Determine layout for subplots
+    #     fig, axs = plt.subplots(1, num_columns, figsize=(num_columns * 5, 5))
+        
+    #     # Handle the case where there is only one column
+    #     if num_columns == 1:
+    #         axs = [axs]
+        
+    #     for ax, col, title in zip(axs, columns, titles):
+    #         # Calculate the distribution
+    #         distribution = data[col].value_counts()
+            
+    #         # Create the explode configuration
+    #         explode = [explode_ratio] * len(distribution)
+            
+    #         # Generate the pie plot
+    #         wedges, texts, autotexts = ax.pie(
+    #             distribution,
+    #             labels=distribution.index,
+    #             autopct='%1.1f%%',
+    #             startangle=140,
+    #             colors=self.colors[:len(distribution)],
+    #             explode=explode,
+    #             shadow=True
+    #         )
+            
+    #         # Set title if provided
+    #         if title:
+    #             ax.set_title(title, fontsize=16)
+        
+    #     plt.tight_layout()
+    #     plt.show()
 
 
     def boxplot_distribution(self, data, category_column, value_column, title=None):
