@@ -1,4 +1,4 @@
-# 📊 Employee Satisfaction Analysis
+# 📊 Employee Satisfaction Analysis 📊
 
 ## 📝 Project Summary
 
