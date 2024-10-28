@@ -8,11 +8,8 @@ from datetime import datetime
 
 
 # FIRST STEP: EXTRACT DATA
-
-df = pd.read_csv("data/HR RAW DATA.csv", index_col=0)
+df = pd.read_csv("data/hr_raw_data.csv", index_col=0)
 df.head()
-hr_data = pd.read_csv("data/hr_data_transformed_2024-08-02_161418.csv")
-
 
 
 # SECOND STEP: TRANSFORMATION
@@ -68,10 +65,12 @@ abc_data.change_null_for_median(columns_modify) # eliminate nulls with median va
 columns_modify = ["total_working_years"]
 abc_data.change_null_for_mean(columns_modify) # eliminate nulls with mean value
 
+abc_data.create_csv("data/hr_data_transformed.csv") # create csv with transformed data
+
+hr_data = pd.read_csv("data/hr_data_transformed.csv") # create dataframe with transformed data
 
 
-
-# THIRD STEP: LOAD
+# THIRD STEP: LOAD TO MySQL DATABASE
 db_hr = db(user ="root", password="AlumnaAdalab", host= "127.0.0.1", database="HR_optimization") # gives parameters to the database
 
 db_hr.clean_dataframe(hr_data) # clean dataframe to use it at last step
